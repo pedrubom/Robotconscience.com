@@ -300,7 +300,6 @@ function onTumblrLoaded( json ){
 }
 
 //FLICKR
-var key = 'ec0596d5cac84b1b000c204c313e0746';
 
 function getFlickr( divId, number)
 {
