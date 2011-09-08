@@ -78,6 +78,7 @@ function newProject( id, parent )
 	newDiv.imageContainer	= document.getElementById("image_"+id);
 	newDiv.titleContainer	= document.getElementById("title_"+id);
 	newDiv.contentContainer	= document.getElementById("content_"+id);
+	
 	return newDiv;
 }
 
