@@ -210,6 +210,14 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 	float:left;
 }
 
+.openedPost
+{
+	width:900px;
+	margin-right:2px;
+	margin-bottom:2px;
+	float:left;
+}
+
 .postImage
 {
 	width:224px;
@@ -218,17 +226,49 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 .thumbText
 {
 	position:relative;
-	top:-25px;
+	top:-126px;
 	left:0px;
-	background-color:#333;
-	color:#fff;
-	opacity:.85;
-	padding:4px;
+	float:left;
+	background-color:white;
+	color:black;
+	opacity:0;
+	cursor:pointer;
+	-webkit-transition: opacity .25s ease-out;
+	transition: opacity .25s ease-out;
+	padding:4px 8px 2px 8px;
+}
+
+.thumbText:hover
+{
+	opacity:1;
+	background-color:white;
+	color:black;
+}
+
+.openProject
+{
+	position:relative;
+	top:-126px;
+	right:0px;
+	float:left;
+	padding:4px 8px 2px 8px;
+	cursor:pointer;
+	color:white;
+	background-color:black;
+	opacity:0;
+	-webkit-transition: opacity .25s ease-out;
+	transition: opacity .25s ease-out;
+}
+
+.openProject:hover
+{
+	font-weight:bold;
 }
 
 .rcPost
 {
 	visibility:hidden;
+	display:none;
 }
 
 .postsHr

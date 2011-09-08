@@ -61,7 +61,8 @@
 <div id="projectTemplate" class="postDiv">
 	<div id="thumb">
 		<div id="thumbImg" class="postImage"></div>
-		<div id="thumbText" class="thumbText"></div>
+		<div id="thumbText" class="thumbText">+</div>
+		<div id="openProject" class="openProject">+</div>
 	</div>
 	<div id="contentDiv" class="rcPost">
 		<div id="images" class="rcPostImages">

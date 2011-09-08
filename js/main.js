@@ -58,7 +58,7 @@ $(document).ready(function(){
 	setInterval(updateTime, 30000);
 });
 
-function newProject( id, parent )
+function newProject( id, parent, catId )
 {
 	var newDiv = projectTemplate.cloneNode(true);
 	newDiv.id = id;
@@ -70,14 +70,38 @@ function newProject( id, parent )
 	}
 	parent.appendChild(newDiv);
 	
-	projectDivs[id]			= {};
-	projectDivs[id].div		= newDiv;
+	projectDivs[catId]		= projectDivs[catId] || {};
+	projectDivs[catId][id]  = {}
+	projectDivs[catId][id].div	= newDiv;
+	newDiv.thumb			= document.getElementById("thumb_"+id);
 	newDiv.thumbImg 		= document.getElementById("thumbImg_"+id);
 	newDiv.thumbText 		= document.getElementById("thumbText_"+id);
+	newDiv.open				= document.getElementById("openProject_"+id);
+	newDiv.thumb.onmouseover = function(){
+		if (newDiv.thumbText.style.opacity <= 0){
+			newDiv.thumbText.style.opacity = .5;
+		}
+		//newDiv.open.style.opacity = 1;
+	}
+	newDiv.thumbText.onmousedown 	 = function(){
+		newDiv.thumb.style.visibility = "hidden";
+		newDiv.thumb.style.display = "none";
+		newDiv.contentDiv.style.visibility = "visible";
+		newDiv.contentDiv.style.display = "block";
+		newDiv.className = "openedPost";
+	}
+	newDiv.thumbText.onmouseover = function(){
+		newDiv.thumbText.style.opacity = .9;
+	}
+	newDiv.thumb.onmouseout = function(){
+		newDiv.thumbText.style.opacity = 0.0;
+		//newDiv.open.style.opacity = 0.0;
+	}
 	newDiv.contentDiv		= document.getElementById("contentDiv_"+id);
 	newDiv.imageContainer	= document.getElementById("image_"+id);
 	newDiv.titleContainer	= document.getElementById("title_"+id);
 	newDiv.contentContainer	= document.getElementById("content_"+id);
+	
 	
 	return newDiv;
 }
@@ -138,14 +162,31 @@ function onCategoryLoaded( json )
 				var url  	= posts[i].url;
 				var title	= posts[i].title_plain;
 				var contentHTML = posts[i].content;
+				var images = [];
+				if (posts[i].custom_fields){
+					images = posts[i].custom_fields.image || [];
+				} 
 				//var thumbImg	= posts[i].excerpt.
 
-				var newDiv 		= newProject(p_id, divs[id]);
+				var newDiv 		= newProject(p_id, divs[id], id);
 				newDiv.url  	= url;
 				newDiv.thumbImg.innerHTML  		= posts[i].excerpt;
-				newDiv.thumbText.innerHTML 		= title;
+				//newDiv.thumbText.innerHTML 		= title;
 				newDiv.titleContainer.innerHTML = title;
 				newDiv.contentContainer.innerHTML = contentHTML;
+				
+				for (var j=0,len=images.length; j<len; j++){
+					var img = document.createElement("img");
+					try {
+						var obj = eval(images[j]);
+						img.src = obj.src;
+						img.className = "rcPostImage";
+						newDiv.imageContainer.appendChild(img)
+					}
+					catch(exc){
+						console.log('error with eval '+exc);
+					}
+				}
 				
 				divs[id].appendChild(newDiv);
 			} else if (slug == "twitter"){
