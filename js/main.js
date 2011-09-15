@@ -49,6 +49,7 @@ var projectTemplate;
 var projectDivs	= {};
 var divs = [];
 var contentIndicides = {};
+var currentOpenProject = null;
 
 $(document).ready(function(){
 	//setup project templat
@@ -57,6 +58,56 @@ $(document).ready(function(){
 	updateTime();
 	setInterval(updateTime, 30000);
 });
+
+// scroll
+function getScrollTop(){
+    if(typeof pageYOffset!= 'undefined'){
+        //most browsers
+        return pageYOffset;
+    }
+    else{
+        var B= document.body; //IE 'quirks'
+        var D= document.documentElement; //IE with doctype
+        D= (D.clientHeight)? D: B;
+        return D.scrollTop;
+    }
+}
+function getScrollLeft(){
+    if(typeof pageXOffset!= 'undefined'){
+        //most browsers
+        return pageXOffset;
+    }
+    else{
+        var B= document.body; //IE 'quirks'
+        var D= document.documentElement; //IE with doctype
+        D= (D.clientWidth)? D: B;
+        return D.scrollLeft;
+    }
+}
+
+function scrollWindowTo(x, y)
+{
+	if (window.scrollInterval) window.clearInterval(window.scrollInterval);
+	window.targetX = x;
+	window.targetY = y;
+	window.curX    = getScrollLeft();
+	window.curY	   = getScrollTop();
+	window.scrollInterval = window.setInterval(updateScroll, 3);
+}
+
+function updateScroll(){
+	window.curX -= (window.curX - window.targetX)/25;
+	window.curY -= (window.curY - window.targetY)/25;
+	
+	console.log(window.targetY+":"+window.curY)
+	
+	if (Math.abs(window.targetX - window.curX) < 1 && Math.abs(window.targetY - window.curY) < 1){
+		window.scrollTo(Math.floor(window.targetX), Math.floor(window.targetY));
+		window.clearInterval(window.scrollInterval);
+	} else {
+		window.scrollTo(Math.floor(window.curX), Math.floor(window.curY));
+	}
+}
 
 function newProject( id, parent, catId )
 {
@@ -84,11 +135,14 @@ function newProject( id, parent, catId )
 		//newDiv.open.style.opacity = 1;
 	}
 	newDiv.thumbText.onmousedown 	 = function(){
+		if (currentOpenProject != null) closeProject(currentOpenProject);
 		newDiv.thumb.style.visibility = "hidden";
 		newDiv.thumb.style.display = "none";
 		newDiv.contentDiv.style.visibility = "visible";
 		newDiv.contentDiv.style.display = "block";
 		newDiv.className = "openedPost";
+		currentOpenProject = newDiv;
+		scrollWindowTo(0, newDiv.offsetTop);
 	}
 	newDiv.thumbText.onmouseover = function(){
 		newDiv.thumbText.style.opacity = .9;
@@ -99,11 +153,28 @@ function newProject( id, parent, catId )
 	}
 	newDiv.contentDiv		= document.getElementById("contentDiv_"+id);
 	newDiv.imageContainer	= document.getElementById("image_"+id);
-	newDiv.titleContainer	= document.getElementById("title_"+id);
+	//newDiv.titleContainer	= document.getElementById("title_"+id);
 	newDiv.contentContainer	= document.getElementById("content_"+id);
 	
-	
 	return newDiv;
+}
+
+function closeProject( project )
+{
+	project.thumb.style.visibility = "visible";
+	project.thumb.style.display = "block";
+	project.contentDiv.style.visibility = "hidden";
+	project.contentDiv.style.display = "none";
+	project.className = "postDiv";
+}
+
+function setHeader(catId )
+{
+	//randomize header colors
+	var header = document.getElementById("header_"+catId);
+	header.style.backgroundColor = 'rgba('+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+',.6)';
+	console.log(header.style.backgroundColor);
+	
 }
 
 function getCategory( divId, catId, numPosts )
@@ -172,14 +243,15 @@ function onCategoryLoaded( json )
 				newDiv.url  	= url;
 				newDiv.thumbImg.innerHTML  		= posts[i].excerpt;
 				//newDiv.thumbText.innerHTML 		= title;
-				newDiv.titleContainer.innerHTML = title;
+				//newDiv.titleContainer.innerHTML 	= title;
 				newDiv.contentContainer.innerHTML = contentHTML;
 				
 				for (var j=0,len=images.length; j<len; j++){
-					var img = document.createElement("img");
+					var img = document.createElement("div");
 					try {
 						var obj = eval(images[j]);
-						img.src = obj.src;
+						console.log(obj);
+						img.innerHTML = obj.src;
 						img.className = "rcPostImage";
 						newDiv.imageContainer.appendChild(img)
 					}

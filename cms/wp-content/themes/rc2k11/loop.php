@@ -42,13 +42,13 @@
 			<div id="'. $categories[$i]->cat_ID. '" class="catContainer"></div>
 				');
 				if ($slug == "twitter"){
-					echo("<script>getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 1 );</script>");
+					echo("<script>getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 1 ); setHeader(" . $categories[$i]->cat_ID."); </script>");
 				} else if ($slug == "flickr"){
-					echo("<script>getFlickr(" . $categories[$i]->cat_ID.", 7 );</script>");
+					echo("<script>getFlickr(" . $categories[$i]->cat_ID.", 7 ); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else if ($slug == "tumblr"){
-					echo("<script>getTumblr(" . $categories[$i]->cat_ID. ",7 );</script>");
+					echo("<script>getTumblr(" . $categories[$i]->cat_ID. ",7 ); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else {		
-					echo("<script>getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7 );</script>");
+					echo("<script>getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7 ); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				}
 				echo('
 			<hr id="'. $categories[$i]->cat_ID .'_buffer" class="postsHr" />');
@@ -67,15 +67,18 @@
 	<div id="contentDiv" class="rcPost">
 		<div id="images" class="rcPostImages">
 			<div id="image"></div>
-			<div id="prev" class="prev">PREV</div>
-			<div id="prev" class="next">NEXT</div>
+			<div id="prevNext" class="prevNextContainer">
+				<div id="prev" class="prev">PREV</div>
+				<div id="next" class="next">NEXT</div>
+			</div>
 			<div id="caption" class="caption"></div>
 		</div>
-		<div id="titleDiv" >
-			<h1 id="title"></h1>
-		</div>
+		<!-- <div id="titleDiv" >
+					<h1 id="title"></h1>
+				</div> -->
 		<div id="contentDiv">
 			<div id="content" class="rcContent"></div>
 		</div>
 	</div>
+	<hr />
 </div>
