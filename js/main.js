@@ -45,7 +45,7 @@ function updateTime(){
 }
 
 //globals
-var projectTemplate;
+var projectTemplate, miscContentTemplate;
 var projectDivs	= {};
 var divs = [];
 var contentIndicides = {};
@@ -54,6 +54,7 @@ var currentOpenProject = null;
 $(document).ready(function(){
 	//setup project templat
 	projectTemplate = document.getElementById('projectTemplate');
+	miscContentTemplate = document.getElementById('miscContentTemplate');
 	//setup time
 	updateTime();
 	setInterval(updateTime, 30000);
@@ -98,9 +99,6 @@ function scrollWindowTo(x, y)
 function updateScroll(){
 	window.curX -= (window.curX - window.targetX)/25;
 	window.curY -= (window.curY - window.targetY)/25;
-	
-	console.log(window.targetY+":"+window.curY)
-	
 	if (Math.abs(window.targetX - window.curX) < 1 && Math.abs(window.targetY - window.curY) < 1){
 		window.scrollTo(Math.floor(window.targetX), Math.floor(window.targetY));
 		window.clearInterval(window.scrollInterval);
@@ -109,10 +107,110 @@ function updateScroll(){
 	}
 }
 
-function newProject( id, parent, catId )
+function newProject( id, parent, catId, slug )
 {
 	var newDiv = projectTemplate.cloneNode(true);
 	newDiv.id = id;
+	newDiv.slug = slug;
+	
+	var allMyChildren = newDiv.getElementsByTagName('*');
+	
+	for (var i=0; i<allMyChildren.length; i++){
+		allMyChildren[i].id += "_"+id; 
+	}
+	parent.appendChild(newDiv);
+	
+	projectDivs[catId] 			= projectDivs[catId] || {}; 
+	projectDivs[catId][id]  	= {}
+	projectDivs[catId][id].div	= newDiv;
+	
+	//thumbnail
+	newDiv.thumb			= document.getElementById("thumb_"+id);
+	newDiv.thumbImg 		= document.getElementById("thumbImg_"+id);
+	newDiv.thumbText 		= document.getElementById("thumbText_"+id);
+	newDiv.open				= document.getElementById("openProject_"+id);
+	newDiv.thumb.onmouseover = function(){
+		if (newDiv.thumbText.style.opacity <= 0){
+			newDiv.thumbText.style.opacity = .5;
+		}
+		//newDiv.open.style.opacity = 1;
+	}
+	newDiv.thumbText.onmouseup 	 = function(){
+		if (currentOpenProject != null) closeProject(currentOpenProject);
+		newDiv.thumb.style.visibility = "hidden";
+		newDiv.thumb.style.display = "none";
+		newDiv.contentDiv.style.visibility = "visible";
+		newDiv.contentDiv.style.display = "block";
+		newDiv.className = "openedPost";
+		currentOpenProject = newDiv;
+		scrollWindowTo(0, newDiv.offsetTop);
+		window.location.hash=newDiv.slug;
+	}
+	newDiv.thumbText.onmouseover = function(){
+		newDiv.thumbText.style.opacity = .9;
+	}
+	newDiv.thumb.onmouseout = function(){
+		newDiv.thumbText.style.opacity = 0.0;
+		//newDiv.open.style.opacity = 0.0;
+	}
+	newDiv.contentDiv		= document.getElementById("contentDiv_"+id);
+	
+	//image container
+	newDiv.imageContParent	= document.getElementById("images_"+id);
+	newDiv.imageContainer	= document.getElementById("image_"+id);
+	newDiv.prevImage		= document.getElementById("prev_"+id);
+	newDiv.nextImage		= document.getElementById("next_"+id);
+	
+	newDiv.imageContParent.onmouseover = function(){
+		if (newDiv.prevImage.style.opacity <= 0){
+			newDiv.prevImage.style.opacity = .5;
+		}
+		if (newDiv.nextImage.style.opacity <= 0){
+			newDiv.nextImage.style.opacity = .5;
+		}
+	}
+	newDiv.imageContParent.onmouseout = function(){
+		newDiv.nextImage.style.opacity = 0.0;
+		newDiv.prevImage.style.opacity = 0.0;
+	}
+	newDiv.prevImage.onmouseover = function(){
+		newDiv.prevImage.style.opacity = 1.0;
+	}
+	newDiv.prevImage.onmouseout = function(){
+		newDiv.prevImage.style.opacity = 0.5;
+	}
+	newDiv.nextImage.onmouseover = function(){
+		newDiv.nextImage.style.opacity = 1.0;
+	}
+	newDiv.nextImage.onmouseout = function(){
+		newDiv.nextImage.style.opacity = 0.5;
+	}
+	newDiv.prevImage.onmouseup			= function(){
+		newDiv.currentImage--;
+		if (newDiv.currentImage < 0){
+			newDiv.currentImage = newDiv.totalImages-1;
+		}
+		newDiv.imageContainer.style.left = -newDiv.images[newDiv.currentImage].offsetLeft+"px";//clientLeft;
+	}
+	newDiv.nextImage.onmouseup			= function(){
+		newDiv.currentImage++;
+		if (newDiv.currentImage >= newDiv.totalImages){
+			newDiv.currentImage = 0;
+		}
+		newDiv.imageContainer.style.left = -newDiv.images[newDiv.currentImage].offsetLeft+"px";//clientLeft;
+	}
+	
+	
+	//newDiv.titleContainer	= document.getElementById("title_"+id);
+	newDiv.contentContainer	= document.getElementById("content_"+id);
+	
+	return newDiv;
+}
+
+function newContent( id, parent, catId, slug, content){
+	var newDiv = miscContentTemplate.cloneNode(true);
+	newDiv.id = id;
+	newDiv.slug = slug;
 	
 	var allMyChildren = newDiv.getElementsByTagName('*');
 	
@@ -124,6 +222,8 @@ function newProject( id, parent, catId )
 	projectDivs[catId]		= projectDivs[catId] || {};
 	projectDivs[catId][id]  = {}
 	projectDivs[catId][id].div	= newDiv;
+	
+	//thumbnail
 	newDiv.thumb			= document.getElementById("thumb_"+id);
 	newDiv.thumbImg 		= document.getElementById("thumbImg_"+id);
 	newDiv.thumbText 		= document.getElementById("thumbText_"+id);
@@ -134,7 +234,7 @@ function newProject( id, parent, catId )
 		}
 		//newDiv.open.style.opacity = 1;
 	}
-	newDiv.thumbText.onmousedown 	 = function(){
+	newDiv.thumbText.onmouseup 	 = function(){
 		if (currentOpenProject != null) closeProject(currentOpenProject);
 		newDiv.thumb.style.visibility = "hidden";
 		newDiv.thumb.style.display = "none";
@@ -143,6 +243,7 @@ function newProject( id, parent, catId )
 		newDiv.className = "openedPost";
 		currentOpenProject = newDiv;
 		scrollWindowTo(0, newDiv.offsetTop);
+		window.location.hash=newDiv.slug;
 	}
 	newDiv.thumbText.onmouseover = function(){
 		newDiv.thumbText.style.opacity = .9;
@@ -152,9 +253,8 @@ function newProject( id, parent, catId )
 		//newDiv.open.style.opacity = 0.0;
 	}
 	newDiv.contentDiv		= document.getElementById("contentDiv_"+id);
-	newDiv.imageContainer	= document.getElementById("image_"+id);
-	//newDiv.titleContainer	= document.getElementById("title_"+id);
 	newDiv.contentContainer	= document.getElementById("content_"+id);
+	newDiv.contentContainer.innerHTML = content;
 	
 	return newDiv;
 }
@@ -173,8 +273,6 @@ function setHeader(catId )
 	//randomize header colors
 	var header = document.getElementById("header_"+catId);
 	header.style.backgroundColor = 'rgba('+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+',.6)';
-	console.log(header.style.backgroundColor);
-	
 }
 
 function getCategory( divId, catId, numPosts )
@@ -195,7 +293,7 @@ function getCategory( divId, catId, numPosts )
 	numToRequest = contentIndicides[catId].number;
 	
 	$.ajax({
-	  url: "../?json=get_category_posts&id="+catId+"&count="+numToRequest+"&custom_fields=image",
+	  url: "?json=get_category_posts&id="+catId+"&count="+numToRequest+"&custom_fields=image",
 	  success: onCategoryLoaded,
 	  dataType: "json"
 	});
@@ -226,8 +324,7 @@ function onCategoryLoaded( json )
 	{
 		var status = posts[i].status;
 		
-		if (status == "publish")
-		{
+		if (status == "publish"){
 			if (slug != 'twitter' && slug != 'flickr' && slug != 'tumblr' ){
 				var p_id 	= posts[i].id;
 				var url  	= posts[i].url;
@@ -236,24 +333,36 @@ function onCategoryLoaded( json )
 				var images = [];
 				if (posts[i].custom_fields){
 					images = posts[i].custom_fields.image || [];
-				} 
+				}
 				//var thumbImg	= posts[i].excerpt.
 
-				var newDiv 		= newProject(p_id, divs[id], id);
+				var newDiv 		= newProject(p_id, divs[id], id, posts[i].slug);
 				newDiv.url  	= url;
 				newDiv.thumbImg.innerHTML  		= posts[i].excerpt;
 				//newDiv.thumbText.innerHTML 		= title;
 				//newDiv.titleContainer.innerHTML 	= title;
 				newDiv.contentContainer.innerHTML = contentHTML;
 				
-				for (var j=0,len=images.length; j<len; j++){
+				newDiv.imageContainer.width = 0;
+				var len=images.length;
+				if (len > 1){
+					newDiv.prevImage.style.visibility = newDiv.nextImage.style.visibility = "visible";
+					newDiv.images = [];
+				} else if (len == 0){
+					newDiv.imageContParent.style.visibility = "hidden";
+				}
+				newDiv.currentImage = 0;
+				newDiv.totalImages	= len;
+					
+				for (var j=0; j<len; j++){
 					var img = document.createElement("div");
 					try {
 						var obj = eval(images[j]);
-						console.log(obj);
 						img.innerHTML = obj.src;
 						img.className = "rcPostImage";
-						newDiv.imageContainer.appendChild(img)
+						newDiv.imageContainer.appendChild(img);
+						newDiv.imageContainer.width += img.width+20;
+						newDiv.images[newDiv.images.length] = img;
 					}
 					catch(exc){
 						console.log('error with eval '+exc);
@@ -283,36 +392,40 @@ function onCategoryLoaded( json )
 
 				}
 			} else if (slug == "tumblr"){
-				
 			} else {
 				var p_id 	= posts[i].id;
 				var url  	= posts[i].url;
 				var title	= posts[i].title_plain;
 				var contentHTML = posts[i].content;
+				var excerpt	= '<div id="'+p_id+'_thumb" class="postImage">'+contentHTML+'</div>';
 				//var thumbImg	= posts[i].excerpt.
-
-				var div = document.createElement("div");
+				
+				var newDiv 	= newContent( p_id, divs[id], id, posts[i].slug, contentHTML);
+				newDiv.thumbImg.innerHTML = excerpt;
+				
+				/*var div = document.createElement("div");
 				div.id = p_id;
 				div.className = "postDiv";
 
 				var thumbDiv = document.createElement("div");
 				thumbDiv.id = p_id+"_thumb";
 				thumbDiv.className = "postImage";
-				thumbDiv.innerHTML = contentHTML;
+				thumbDiv.innerHTML = contentHTML;*/
 				
 				//var contentDiv = document.createElement("div");
 				//contentDiv.className = "rcPost";
 				
-				var content = document.createElement("span");
+				/*var content = document.createElement("span");
 				content.innerHTML = contentHTML;
 				div.appendChild(thumbDiv);
-				divs[id].appendChild(div);
+				divs[id].appendChild(div);*/
 			}
 		}
 	}
 	if (numPosts - end > 0){
 		createMoreButton(divs[id], divs[id].id, id, end-start+1);
 	} else if (numPosts <= 0){
+		console.log("remove element "+id);
 		removeElementById(id+"_buffer");
 	}
 }
@@ -323,7 +436,6 @@ function createMoreButton( div, divId, catId, numPosts ){
 	moreDiv.id			= divId+"_more";
 	moreDiv.innerHTML 	= "MORE";
 	moreDiv.onclick		= function(){
-		console.log("click?");
 		removeElementById(divId+"_more");
 		getCategory( divId, catId, numPosts );
 	};
@@ -347,7 +459,7 @@ function stripHTML(html)
 function getTumblr( divId, number )
 {	
 	if (contentIndicides["tumblr"]){
-		contentIndicides["tumblr"].offset = contentIndicides["tumblr"].number;
+		contentIndicides["tumblr"].offset += contentIndicides["tumblr"].number;
 		contentIndicides["tumblr"].number += number;
 	} else {
 		contentIndicides["tumblr"] = {};
@@ -377,7 +489,9 @@ function onTumblrLoaded( json ){
 		var image	= posts[i]["photo-url-1280"];
 		
 		if (image){
-			var div = document.createElement("div");
+			var newDiv 	= newContent( p_id, divs['tumblr'], 'tumblr', posts[i].slug, "<div><img class='contentImage' src='"+image+"' /><br />"+title+"</div>");
+			newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
+			/*var div = document.createElement("div");
 			div.id = p_id;
 			div.className = "postDiv";
 
@@ -395,7 +509,7 @@ function onTumblrLoaded( json ){
 			thumbDiv.appendChild(thumbText);
 
 			div.appendChild(thumbDiv);
-			divs["tumblr"].appendChild(div);
+			divs["tumblr"].appendChild(div);*/
 		}
 	}
 	if (numPosts - end > 0){
@@ -404,7 +518,6 @@ function onTumblrLoaded( json ){
 		moreDiv.id			= divs["tumblr"].id+"_more";
 		moreDiv.innerHTML 	= "MORE";
 		moreDiv.onclick		= function(){
-			console.log("click?");
 			removeElementById(divs["tumblr"].id+"_more");
 			getTumblr( divs["tumblr"].id, 8 );
 		};
@@ -447,8 +560,12 @@ function jsonFlickrApi(json){
 		var url  	= "http://www.flickr.com/photos/"+posts[i].owner+"/"+posts[i].id;
 		var title	= posts[i].title;
 		var image	= "http://farm"+posts[i].farm+".static.flickr.com/"+posts[i].server+"/"+posts[i].id+"_"+posts[i].secret+".jpg";
+		var imageL	= "http://farm"+posts[i].farm+".static.flickr.com/"+posts[i].server+"/"+posts[i].id+"_"+posts[i].secret+"_b.jpg";
 
-		var div = document.createElement("div");
+		var newDiv 	= newContent( p_id, divs['flickr'], 'flickr', title, "<div><img class='contentImage' src='"+imageL+"' /><br />"+title+"</div>");
+		newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
+
+		/*var div = document.createElement("div");
 		div.id = p_id;
 		div.className = "postDiv";
 
@@ -466,7 +583,7 @@ function jsonFlickrApi(json){
 		thumbDiv.appendChild(thumbText);
 
 		div.appendChild(thumbDiv);
-		divs["flickr"].appendChild(div);
+		divs["flickr"].appendChild(div);*/
 	}
 	if (pages - page > 0){
 		var moreDiv = document.createElement("div");

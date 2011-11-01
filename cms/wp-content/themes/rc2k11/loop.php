@@ -42,16 +42,16 @@
 			<div id="'. $categories[$i]->cat_ID. '" class="catContainer"></div>
 				');
 				if ($slug == "twitter"){
-					echo("<script>getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 1 ); setHeader(" . $categories[$i]->cat_ID."); </script>");
+					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 3 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID."); </script>");
 				} else if ($slug == "flickr"){
-					echo("<script>getFlickr(" . $categories[$i]->cat_ID.", 7 ); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getFlickr(" . $categories[$i]->cat_ID.", 7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else if ($slug == "tumblr"){
-					echo("<script>getTumblr(" . $categories[$i]->cat_ID. ",7 ); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getTumblr(" . $categories[$i]->cat_ID. ",7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else {		
-					echo("<script>getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7 ); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7),'. $i*2 .' ); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				}
-				echo('
-			<hr id="'. $categories[$i]->cat_ID .'_buffer" class="postsHr" />');
+				/*echo('
+			<hr id="'. $categories[$i]->cat_ID .'_buffer" class="postsHr" />');*/
 				echo('
 				');
 			}
@@ -66,10 +66,10 @@
 	</div>
 	<div id="contentDiv" class="rcPost">
 		<div id="images" class="rcPostImages">
-			<div id="image"></div>
+			<div id="image" class="rcPostImageContainer"></div>
 			<div id="prevNext" class="prevNextContainer">
-				<div id="prev" class="prev">PREV</div>
-				<div id="next" class="next">NEXT</div>
+				<div id="prev" class="prev">&lt; PREV</div>
+				<div id="next" class="next">NEXT &gt;</div>
 			</div>
 			<div id="caption" class="caption"></div>
 		</div>
@@ -79,6 +79,21 @@
 		<div id="contentDiv">
 			<div id="content" class="rcContent"></div>
 		</div>
+		<hr />
+	</div>
+	<hr />
+</div>
+<div id="miscContentTemplate" class="postDiv">
+	<div id="thumb">
+		<div id="thumbImg" class="postImage"></div>
+		<div id="thumbText" class="thumbText">+</div>
+		<div id="openProject" class="openProject">+</div>
+	</div>
+	<div id="contentDiv" class="rcPost">
+		<div id="contentDiv">
+			<div id="content" class="rcContent"></div>
+		</div>
+		<hr />
 	</div>
 	<hr />
 </div>

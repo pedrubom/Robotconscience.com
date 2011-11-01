@@ -197,7 +197,7 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 	transition: height .25s ease-out;
 }
 
-#projectTemplate
+#projectTemplate, #miscContentTemplate
 {
 	visibility:hidden;
 	display:none;
@@ -205,8 +205,8 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 
 .postDiv
 {
-	width:224px;
-	height:126px;
+	width:233px;
+	height:130px;
 	margin-right:2px;
 	margin-bottom:2px;
 	overflow:hidden;
@@ -217,7 +217,7 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 .thumbText
 {
 	position:relative;
-	top:-126px;
+	top:-130px;
 	left:0px;
 	float:left;
 	background-color:white;
@@ -256,6 +256,7 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 	padding-bottom:5px;
 	float:left;
 	visibility:hidden;
+	opacity:0;
 }
 
 .next
@@ -277,8 +278,8 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 
 .postImage
 {
-	width:224px;
-	height:126px;
+	width:233px;
+	height:130px;
 }
 
 h1
@@ -296,7 +297,7 @@ h2
 .openProject
 {
 	position:relative;
-	top:-126px;
+	top:-130px;
 	right:0px;
 	float:left;
 	padding:4px 8px 2px 8px;
@@ -311,6 +312,11 @@ h2
 .openProject:hover
 {
 	font-weight:bold;
+}
+
+.contentImage
+{
+	max-height:500px;
 }
 
 .rcContent
@@ -356,6 +362,34 @@ h2
 	width:100%;
 }
 
+/* images */
+
+.rcPostImages
+{
+	overflow:hidden;
+	width:938px;
+}
+
+.rcPostImageContainer
+{
+	width:99999px;
+	height:500px;
+	position:relative;
+	left:0px;
+	-webkit-transition: left .25s ease-out;
+	transition: left .25s ease-out;
+}
+
+.rcPostImage
+{
+	float:left;
+	padding-right:5px;
+}
+
+.rcPostImage img
+{
+	height:500px;
+}
 /* post types */
 
 .twitter
@@ -369,7 +403,8 @@ h2
 
 .tumblrImg 
 {
-	width:224px;
+	width:
+233px;
 }
 
 .moreButton {
@@ -736,7 +771,7 @@ textarea {
 .headerBar
 {
 	float:left;
-	width:100%;
+	width:928px;
 	font-size:14px;
 	padding-bottom:8px;
 	padding-top:12px;
