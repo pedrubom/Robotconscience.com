@@ -446,8 +446,7 @@ function onCategoryLoaded( json )
 	if (numPosts - end > 0){
 		createMoreButton(divs[id], divs[id].id, id, end-start+1);
 	} else if (numPosts <= 0){
-		console.log("remove element "+id);
-		removeElementById(id+"_buffer");
+		removeElementById(id);
 	}
 }
 

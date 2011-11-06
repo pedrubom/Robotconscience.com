@@ -195,6 +195,7 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 	overflow:hidden;
 	-webkit-transition: height .25s ease-out;
 	transition: height .25s ease-out;
+	padding-bottom:15px;
 }
 
 #projectTemplate, #miscContentTemplate
@@ -273,7 +274,7 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 .prevNextContainer
 {
 	position:absolute;
-	width:900px;
+	width:940px;
 }
 
 .postImage
@@ -357,6 +358,11 @@ h2
 {
 	margin-top:2px;
 	margin-bottom:2px;
+	position:relative;
+	left:-20px;
+	width:980px;
+	background-color:#F1F1F1;
+	height:10px;
 }
 
 .postsBigHr 

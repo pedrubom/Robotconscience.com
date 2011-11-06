@@ -38,7 +38,7 @@
 				echo('
 			</div>');
 				echo('
-			<hr class="postsHr" />
+			<hr class="" />
 			<div id="'. $categories[$i]->cat_ID. '" class="catContainer"></div>
 				');
 				if ($slug == "twitter"){
