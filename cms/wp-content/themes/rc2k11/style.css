@@ -282,6 +282,10 @@ DESCRIPTION: Full width content with no sidebar; used for attachment pages
 	height:130px;
 }
 
+.postImage img {
+	width:233px;
+}
+
 h1
 {
 	padding:10px;
@@ -353,6 +357,12 @@ h2
 {
 	margin-top:2px;
 	margin-bottom:2px;
+}
+
+.postsBigHr 
+{
+	margin-bottom:2px;
+	height:4px;
 }
 
 .rcBuffer
@@ -776,12 +786,13 @@ textarea {
 	padding-bottom:8px;
 	padding-top:12px;
 	background-color:white;
-	color:#fff;
+	/*color:#fff;*/
 	padding-left:10px;
+	border-bottom:1px dotted
 }
 .headerBar a
 {
-	color:#fff;
+	/*color:#fff;*/
 }
 
 

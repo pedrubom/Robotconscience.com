@@ -33,7 +33,7 @@
 		for ($i =0; $i<sizeof($categories); $i++){
 			$slug = $categories[$i]->slug;
 			if ($categories[$i]->description != ''){
-				echo ('<div class="headerBar" id="header_'. $categories[$i]->cat_ID. '">
+				echo ('<hr class="postsHr" /><div class="headerBar" id="header_'. $categories[$i]->cat_ID. '">
 				' . $categories[$i]->description);
 				echo('
 			</div>');

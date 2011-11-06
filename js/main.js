@@ -50,6 +50,7 @@ var projectDivs	= {};
 var divs = [];
 var contentIndicides = {};
 var currentOpenProject = null;
+var hash = "";
 
 $(document).ready(function(){
 	//setup project templat
@@ -57,6 +58,10 @@ $(document).ready(function(){
 	miscContentTemplate = document.getElementById('miscContentTemplate');
 	//setup time
 	updateTime();
+	
+	//get hash if there is one
+	hash = (window.location.hash).substr(1);
+	
 	setInterval(updateTime, 30000);
 });
 
@@ -107,6 +112,7 @@ function updateScroll(){
 	}
 }
 
+// build thumb div
 function newProject( id, parent, catId, slug )
 {
 	var newDiv = projectTemplate.cloneNode(true);
@@ -135,16 +141,8 @@ function newProject( id, parent, catId, slug )
 		}
 		//newDiv.open.style.opacity = 1;
 	}
-	newDiv.thumbText.onmouseup 	 = function(){
-		if (currentOpenProject != null) closeProject(currentOpenProject);
-		newDiv.thumb.style.visibility = "hidden";
-		newDiv.thumb.style.display = "none";
-		newDiv.contentDiv.style.visibility = "visible";
-		newDiv.contentDiv.style.display = "block";
-		newDiv.className = "openedPost";
-		currentOpenProject = newDiv;
-		scrollWindowTo(0, newDiv.offsetTop);
-		window.location.hash=newDiv.slug;
+	newDiv.thumbText.onmouseup 	 = newDiv.thumb.onmouseup = function(){
+		openProject(newDiv);
 	}
 	newDiv.thumbText.onmouseover = function(){
 		newDiv.thumbText.style.opacity = .9;
@@ -207,6 +205,49 @@ function newProject( id, parent, catId, slug )
 	return newDiv;
 }
 
+// load project page
+function openProject( projectDiv )
+{
+	if (currentOpenProject != null) closeProject(currentOpenProject);
+	projectDiv.thumb.style.visibility = "hidden";
+	projectDiv.thumb.style.display = "none";
+	projectDiv.contentDiv.style.visibility = "visible";
+	projectDiv.contentDiv.style.display = "block";
+	projectDiv.className = "openedPost";
+	
+	projectDiv.contentContainer.innerHTML = projectDiv.contentHTML;
+	projectDiv.imageContainer.width = 0;
+	var len = projectDiv.imageData.length;
+	projectDiv.images = [];
+	if (len > 1){
+		projectDiv.prevImage.style.visibility = projectDiv.nextImage.style.visibility = "visible";
+	} else if (len == 0){
+		projectDiv.imageContParent.style.visibility = "hidden";
+	}
+	projectDiv.currentImage = 0;
+	projectDiv.totalImages	= len;
+		
+	for (var j=0; j<len; j++){
+		var img = document.createElement("div");
+		try {
+			var obj = eval(projectDiv.imageData[j]);
+			img.innerHTML = obj.src;
+			img.className = "rcPostImage";
+			projectDiv.imageContainer.appendChild(img);
+			projectDiv.imageContainer.width += img.width+20;
+			projectDiv.images[projectDiv.images.length] = img;
+		}
+		catch(exc){
+			console.log('error with eval '+exc);
+		}
+	}
+	
+	currentOpenProject = projectDiv;
+	scrollWindowTo(0, projectDiv.offsetTop);
+	window.location.hash=projectDiv.slug;
+}
+
+// build 3rd party content divs
 function newContent( id, parent, catId, slug, content){
 	var newDiv = miscContentTemplate.cloneNode(true);
 	newDiv.id = id;
@@ -234,10 +275,11 @@ function newContent( id, parent, catId, slug, content){
 		}
 		//newDiv.open.style.opacity = 1;
 	}
-	newDiv.thumbText.onmouseup 	 = function(){
+	newDiv.thumbText.onmouseup 	 = newDiv.thumb.onmouseup = function(){
 		if (currentOpenProject != null) closeProject(currentOpenProject);
 		newDiv.thumb.style.visibility = "hidden";
 		newDiv.thumb.style.display = "none";
+		newDiv.contentContainer.innerHTML = newDiv.content;
 		newDiv.contentDiv.style.visibility = "visible";
 		newDiv.contentDiv.style.display = "block";
 		newDiv.className = "openedPost";
@@ -254,13 +296,15 @@ function newContent( id, parent, catId, slug, content){
 	}
 	newDiv.contentDiv		= document.getElementById("contentDiv_"+id);
 	newDiv.contentContainer	= document.getElementById("content_"+id);
-	newDiv.contentContainer.innerHTML = content;
+	newDiv.content = content;
 	
 	return newDiv;
 }
 
 function closeProject( project )
 {
+	if(project.contentContainer) project.contentContainer.innerHTML = "";
+	if(project.imageContainer) project.imageContainer.innerHTML = "";
 	project.thumb.style.visibility = "visible";
 	project.thumb.style.display = "block";
 	project.contentDiv.style.visibility = "hidden";
@@ -272,7 +316,7 @@ function setHeader(catId )
 {
 	//randomize header colors
 	var header = document.getElementById("header_"+catId);
-	header.style.backgroundColor = 'rgba('+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+',.6)';
+	//header.style.color = 'rgba('+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+',.6)';
 }
 
 function getCategory( divId, catId, numPosts )
@@ -341,35 +385,12 @@ function onCategoryLoaded( json )
 				newDiv.thumbImg.innerHTML  		= posts[i].excerpt;
 				//newDiv.thumbText.innerHTML 		= title;
 				//newDiv.titleContainer.innerHTML 	= title;
-				newDiv.contentContainer.innerHTML = contentHTML;
-				
-				newDiv.imageContainer.width = 0;
-				var len=images.length;
-				if (len > 1){
-					newDiv.prevImage.style.visibility = newDiv.nextImage.style.visibility = "visible";
-					newDiv.images = [];
-				} else if (len == 0){
-					newDiv.imageContParent.style.visibility = "hidden";
-				}
-				newDiv.currentImage = 0;
-				newDiv.totalImages	= len;
-					
-				for (var j=0; j<len; j++){
-					var img = document.createElement("div");
-					try {
-						var obj = eval(images[j]);
-						img.innerHTML = obj.src;
-						img.className = "rcPostImage";
-						newDiv.imageContainer.appendChild(img);
-						newDiv.imageContainer.width += img.width+20;
-						newDiv.images[newDiv.images.length] = img;
-					}
-					catch(exc){
-						console.log('error with eval '+exc);
-					}
-				}
-				
+				newDiv.contentHTML 	= contentHTML;
+				newDiv.imageData		= images;
 				divs[id].appendChild(newDiv);
+				if (hash == posts[i].slug){
+					openProject(newDiv);
+				}
 			} else if (slug == "twitter"){
 				if (!bTwitterDone){
 					var p_id 	= posts[i].id;
@@ -401,7 +422,7 @@ function onCategoryLoaded( json )
 				//var thumbImg	= posts[i].excerpt.
 				
 				var newDiv 	= newContent( p_id, divs[id], id, posts[i].slug, contentHTML);
-				newDiv.thumbImg.innerHTML = excerpt;
+				newDiv.thumbImg.content = excerpt;
 				
 				/*var div = document.createElement("div");
 				div.id = p_id;
@@ -596,4 +617,16 @@ function jsonFlickrApi(json){
 		};
 		divs["flickr"].appendChild(moreDiv);
 	}
+}
+
+//utils
+getQueryString = function (key)
+{
+	key = key.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	var regex = new RegExp("[\\?&]"+key+"=([^&#]*)");
+	var qs = regex.exec(window.location.href);
+	if(qs == null)
+		return '';
+	else
+		return qs[1];
 }

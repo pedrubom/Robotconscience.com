@@ -124,12 +124,8 @@
 					<br /><br /><br />
 					<div class="textDiv">and&nbsp;</div>
 					<div id="c-min" onmouseover="setRandomBgColor('c-pos', 150); setRandomBgColor('c-title', 150); setRandomBgColor('c-yr', 150); setRandomBgColor('c-m', 150); setRandomBgColor('c-d', 150); setRandomBgColor('c-hr', 150); setRandomBgColor('c-min', 150);"class="blank smallblank rancolor5">XX</div>
-					<div class="textDiv">&nbsp;minutes.*</div><br />					
+					<div class="textDiv" style="padding-bottom:12px">&nbsp;minutes.*</div><br /><br />					
 				</div>
-				
-				
-				<div id="site-description"><?php bloginfo( 'description' ); ?></div>
-
 				<?php
 					if ($bUseHeaderImages):
 					// Check if this is a post or page, if it has a thumbnail, and if it's a big one
@@ -145,7 +141,7 @@
 					<?php endif; ?>
 			</div><!-- #branding -->
 
-			<div id="access" role="navigation">
+			<div id="access" role="navigation" style="margin-top:12px">
 			  <?php /*  Allow screen readers / text browsers to skip the navigation menu and get right to the good stuff */ ?>
 				<div class="skip-link screen-reader-text"><a href="#content" title="<?php esc_attr_e( 'Skip to content', 'twentyten' ); ?>"><?php _e( 'Skip to content', 'twentyten' ); ?></a></div>
 				<?php /* Our navigation menu.  If one isn't filled out, wp_nav_menu falls back to wp_page_menu.  The menu assiged to the primary position is the one used.  If none is assigned, the menu with the lowest ID is used.  */ ?>
@@ -156,4 +152,4 @@
 		</div><!-- #masthead -->
 	</div><!-- #header -->
 
-	<div id="main">
+	<div id="main" >
