@@ -226,20 +226,24 @@ function openProject( projectDiv )
 	}
 	projectDiv.currentImage = 0;
 	projectDiv.totalImages	= len;
-		
-	for (var j=0; j<len; j++){
-		var img = document.createElement("div");
-		try {
-			var obj = eval(projectDiv.imageData[j]);
-			img.innerHTML = obj.src;
-			img.className = "rcPostImage";
-			projectDiv.imageContainer.appendChild(img);
-			projectDiv.imageContainer.width += img.width+20;
-			projectDiv.images[projectDiv.images.length] = img;
+	
+	if (len > 0){
+		for (var j=0; j<len; j++){
+			var img = document.createElement("div");
+			try {
+				var obj = eval(projectDiv.imageData[j]);
+				img.innerHTML = obj.src;
+				img.className = "rcPostImage";
+				projectDiv.imageContainer.appendChild(img);
+				projectDiv.imageContainer.width += img.width+20;
+				projectDiv.images[projectDiv.images.length] = img;
+			}
+			catch(exc){
+				console.log('error with eval '+exc);
+			}
 		}
-		catch(exc){
-			console.log('error with eval '+exc);
-		}
+	} else {
+		removeElementById("images_"+projectDiv.id);
 	}
 	
 	currentOpenProject = projectDiv;
@@ -345,10 +349,17 @@ function getCategory( divId, catId, numPosts )
 
 function onCategoryLoaded( json )
 {
-	var id = json.category.id;
-	var slug = json.category.slug;
+	var id, slug, numPosts;
+	if (json.category){
+		id = json.category.id;
+		slug = json.category.slug;
+		numPosts 	= json.category.post_count;
+	} else {
+		id = '4';
+		slug = "eee";
+		numPosts 	= json.count;
+	}
 	
-	var numPosts 	= json.category.post_count;
 	var posts 		= json.posts;
 	
 	if (divs[id] != null){
@@ -370,26 +381,29 @@ function onCategoryLoaded( json )
 		
 		if (status == "publish"){
 			if (slug != 'twitter' && slug != 'flickr' && slug != 'tumblr' ){
-				var p_id 	= posts[i].id;
-				var url  	= posts[i].url;
-				var title	= posts[i].title_plain;
-				var contentHTML = posts[i].content;
-				var images = [];
-				if (posts[i].custom_fields){
-					images = posts[i].custom_fields.image || [];
-				}
-				//var thumbImg	= posts[i].excerpt.
+				console.log(posts[i].excerpt);
+				if (posts[i].excerpt != 'blank'){
+					var p_id 	= posts[i].id;
+					var url  	= posts[i].url;
+					var title	= posts[i].title_plain;
+					var contentHTML = posts[i].content;
+					var images = [];
+					if (posts[i].custom_fields){
+						images = posts[i].custom_fields.image || [];
+					}
+					//var thumbImg	= posts[i].excerpt.
 
-				var newDiv 		= newProject(p_id, divs[id], id, posts[i].slug);
-				newDiv.url  	= url;
-				newDiv.thumbImg.innerHTML  		= posts[i].excerpt;
-				//newDiv.thumbText.innerHTML 		= title;
-				//newDiv.titleContainer.innerHTML 	= title;
-				newDiv.contentHTML 	= contentHTML;
-				newDiv.imageData		= images;
-				divs[id].appendChild(newDiv);
-				if (hash == posts[i].slug){
-					openProject(newDiv);
+					var newDiv 		= newProject(p_id, divs[id], id, posts[i].slug);
+					newDiv.url  	= url;
+					newDiv.thumbImg.innerHTML  		= posts[i].excerpt;
+					//newDiv.thumbText.innerHTML 		= title;
+					//newDiv.titleContainer.innerHTML 	= title;
+					newDiv.contentHTML 	= contentHTML;
+					newDiv.imageData		= images;
+					divs[id].appendChild(newDiv);
+					if (hash == posts[i].slug){
+						openProject(newDiv);
+					}
 				}
 			} else if (slug == "twitter"){
 				if (!bTwitterDone){
@@ -419,27 +433,9 @@ function onCategoryLoaded( json )
 				var title	= posts[i].title_plain;
 				var contentHTML = posts[i].content;
 				var excerpt	= '<div id="'+p_id+'_thumb" class="postImage">'+contentHTML+'</div>';
-				//var thumbImg	= posts[i].excerpt.
 				
 				var newDiv 	= newContent( p_id, divs[id], id, posts[i].slug, contentHTML);
 				newDiv.thumbImg.content = excerpt;
-				
-				/*var div = document.createElement("div");
-				div.id = p_id;
-				div.className = "postDiv";
-
-				var thumbDiv = document.createElement("div");
-				thumbDiv.id = p_id+"_thumb";
-				thumbDiv.className = "postImage";
-				thumbDiv.innerHTML = contentHTML;*/
-				
-				//var contentDiv = document.createElement("div");
-				//contentDiv.className = "rcPost";
-				
-				/*var content = document.createElement("span");
-				content.innerHTML = contentHTML;
-				div.appendChild(thumbDiv);
-				divs[id].appendChild(div);*/
 			}
 		}
 	}
@@ -447,6 +443,7 @@ function onCategoryLoaded( json )
 		createMoreButton(divs[id], divs[id].id, id, end-start+1);
 	} else if (numPosts <= 0){
 		removeElementById(id);
+		document.getElementById('header_'+id).style.border='0px none';
 	}
 }
 
@@ -616,6 +613,31 @@ function jsonFlickrApi(json){
 		};
 		divs["flickr"].appendChild(moreDiv);
 	}
+}
+
+//EEE
+function getEEE(divId, numPosts )
+{
+	divs[divId] = document.getElementById(divId);
+	
+	var numToRequest = numPosts;
+	
+	if (contentIndicides[divId]){
+		contentIndicides[divId].offset = contentIndicides[divId].number;
+		contentIndicides[divId].number += numPosts;
+	} else {
+		contentIndicides[divId] = {};
+		contentIndicides[divId].number = numPosts;
+		contentIndicides[divId].offset = 0;
+	}
+	
+	numToRequest = contentIndicides[divId].number;
+	
+	$.ajax({
+	  url: "../endlessendlessendless/?json=get_posts&count="+numToRequest+"&custom_fields=image",
+	  success: onCategoryLoaded,
+	  dataType: "json"
+	});
 }
 
 //utils

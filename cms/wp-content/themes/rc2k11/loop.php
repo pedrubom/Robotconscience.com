@@ -33,12 +33,13 @@
 		for ($i =0; $i<sizeof($categories); $i++){
 			$slug = $categories[$i]->slug;
 			if ($categories[$i]->description != ''){
-				echo ('<hr class="postsHr" /><div class="headerBar" id="header_'. $categories[$i]->cat_ID. '">
+				//<hr class="postsHr" />
+				echo ('<div class="headerBar" id="header_'. $categories[$i]->cat_ID. '">
 				' . $categories[$i]->description);
 				echo('
 			</div>');
 				echo('
-			<hr class="" />
+			<!-- <hr class="" /> -->
 			<div id="'. $categories[$i]->cat_ID. '" class="catContainer"></div>
 				');
 				if ($slug == "twitter"){
@@ -47,6 +48,8 @@
 					echo("<script>setTimeout(getFlickr(" . $categories[$i]->cat_ID.", 7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else if ($slug == "tumblr"){
 					echo("<script>setTimeout(getTumblr(" . $categories[$i]->cat_ID. ",7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
+				} else if ($slug == "endlessendlessendless"){
+					echo("<script>setTimeout(getEEE(" . $categories[$i]->cat_ID. ",7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else {		
 					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7),'. $i*2 .' ); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				}
@@ -79,9 +82,9 @@
 		<div id="contentDiv">
 			<div id="content" class="rcContent"></div>
 		</div>
-		<hr />
+		<!-- <hr /> -->
 	</div>
-	<hr />
+	<!-- <hr /> -->
 </div>
 <div id="miscContentTemplate" class="postDiv">
 	<div id="thumb">
@@ -95,5 +98,5 @@
 		</div>
 		<hr />
 	</div>
-	<hr />
+	<!-- <hr /> -->
 </div>
