@@ -445,7 +445,11 @@ h2
 .rcPostImage
 {
 	float:left;
-	padding-right:5px;
+	/*padding-right:5px;*/
+	width:938px;
+	height:500px;
+	background-color:#000;
+	text-align:center;
 }
 
 .rcPostImage img

@@ -1,14 +1,8 @@
-function updateTime(){
-	//2008-06-02 9:00
-	var then = new Date(2008,6,2,9,0,0,0);
-	var time = timeSince(then);
-	
-	document.getElementById("c-yr").innerHTML 	= time['years'];
-	document.getElementById("c-m").innerHTML 	= time['months'];
-	document.getElementById("c-d").innerHTML	= time['days'];
-	document.getElementById("c-hr").innerHTML	= time['hours'];
-	document.getElementById("c-min").innerHTML	= time['minutes'];
-}
+/** 
+ * Name:    Robotconscience site v5
+ * Version: 1.0 
+ * Author:  Brett Renfer
+ */
 
 //globals
 var projectTemplate, miscContentTemplate;
@@ -31,7 +25,9 @@ $(document).ready(function(){
 	setInterval(updateTime, 30000);
 });
 
-// build thumb div
+//------------------------------------------------------------
+// BUILD CONTENT
+//------------------------------------------------------------
 function newProject( id, parent, catId, slug )
 {
 	var newDiv = projectTemplate.cloneNode(true);
@@ -135,58 +131,6 @@ function newProject( id, parent, catId, slug )
 	return newDiv;
 }
 
-// load project page
-function openProject( projectDiv )
-{
-	if (currentOpenProject != null) closeProject(currentOpenProject);
-	projectDiv.thumb.style.visibility = "hidden";
-	projectDiv.thumb.style.display = "none";
-	projectDiv.contentDiv.style.visibility = "visible";
-	projectDiv.contentDiv.style.display = "block";
-	projectDiv.className = "openedPost";
-	
-	projectDiv.imageContainer.width = 0;
-	var len = projectDiv.imageData.length;
-	projectDiv.images = [];
-	if (len > 1){
-		projectDiv.prevImage.style.visibility = projectDiv.nextImage.style.visibility = "visible";
-	} else if (len == 0){
-		projectDiv.imageContParent.style.visibility = "hidden";
-	}
-	projectDiv.currentImage = 0;
-	projectDiv.totalImages	= len;
-	
-	if (len > 0){
-		for (var j=0; j<len; j++){
-			var img = document.createElement("div");
-			try {
-				var obj = eval(projectDiv.imageData[j]);
-				img.innerHTML = obj.src;
-				img.className = "rcPostImage";
-				projectDiv.imageContainer.appendChild(img);
-				projectDiv.imageContainer.width += img.width+20;
-				projectDiv.images[projectDiv.images.length] = img;
-			}
-			catch(exc){
-				console.log('error with eval '+exc);
-			}
-		}
-		// add content
-		projectDiv.contentContainer.innerHTML = projectDiv.contentHTML;
-	// looks like they're not formatted, so add + do some other stuff
-	} else {
-		if (projectDiv.hasImageDiv){
-			projectDiv.hasImageDiv = false;
-			removeElementById("images_"+projectDiv.id);
-		}
-		projectDiv.contentContainer.innerHTML = "<div id='pTitle'><h1>"+projectDiv.title+"</h1>"+projectDiv.contentHTML;
-	}
-	
-	currentOpenProject = projectDiv;
-	scrollWindowTo(0, projectDiv.offsetTop);
-	window.location.hash=projectDiv.slug;
-}
-
 // build 3rd party content divs
 function newContent( id, parent, catId, slug, content){
 	var newDiv = miscContentTemplate.cloneNode(true);
@@ -253,6 +197,60 @@ function newContent( id, parent, catId, slug, content){
 	return newDiv;
 }
 
+//------------------------------------------------------------
+// CLOSE + OPEN
+//------------------------------------------------------------
+function openProject( projectDiv )
+{
+	if (currentOpenProject != null) closeProject(currentOpenProject);
+	projectDiv.thumb.style.visibility = "hidden";
+	projectDiv.thumb.style.display = "none";
+	projectDiv.contentDiv.style.visibility = "visible";
+	projectDiv.contentDiv.style.display = "block";
+	projectDiv.className = "openedPost";
+	
+	projectDiv.imageContainer.width = 0;
+	var len = projectDiv.imageData.length;
+	projectDiv.images = [];
+	if (len > 1){
+		projectDiv.prevImage.style.visibility = projectDiv.nextImage.style.visibility = "visible";
+	} else if (len == 0){
+		projectDiv.imageContParent.style.visibility = "hidden";
+	}
+	projectDiv.currentImage = 0;
+	projectDiv.totalImages	= len;
+	
+	if (len > 0){
+		for (var j=0; j<len; j++){
+			var img = document.createElement("div");
+			img.className = 'rcPostImage';
+			try {
+				var obj = eval(projectDiv.imageData[j]);
+				img.innerHTML = obj.src;
+				projectDiv.imageContainer.appendChild(img);
+				projectDiv.imageContainer.width += img.width+20;
+				projectDiv.images[projectDiv.images.length] = img;
+			}
+			catch(exc){
+				console.log('error with eval '+exc);
+			}
+		}
+		// add content
+		projectDiv.contentContainer.innerHTML = projectDiv.contentHTML;
+	// looks like they're not formatted, so add + do some other stuff
+	} else {
+		if (projectDiv.hasImageDiv){
+			projectDiv.hasImageDiv = false;
+			removeElementById("images_"+projectDiv.id);
+		}
+		projectDiv.contentContainer.innerHTML = "<div id='pTitle'><h1>"+projectDiv.title+"</h1>"+projectDiv.contentHTML;
+	}
+	
+	currentOpenProject = projectDiv;
+	scrollWindowTo(0, projectDiv.offsetTop);
+	window.location.hash=projectDiv.slug;
+}
+
 function closeProject( project )
 {
 	if(project.contentContainer) project.contentContainer.innerHTML = "";
@@ -264,12 +262,19 @@ function closeProject( project )
 	project.className = "postDiv";
 }
 
+//------------------------------------------------------------
+// OLD
+//------------------------------------------------------------
 function setHeader(catId )
 {
 	//randomize header colors
 	var header = document.getElementById("header_"+catId);
 	//header.style.color = 'rgba('+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+','+Math.floor(Math.random()*60)+',.6)';
 }
+
+//------------------------------------------------------------
+// GET: WP
+//------------------------------------------------------------
 
 function getCategory( divId, catId, numPosts )
 {
@@ -398,7 +403,11 @@ function onCategoryLoaded( json )
 		}
 	}
 	if (numPosts - end > 0){
-		createMoreButton(divs[id], divs[id].id, id, end-start+1);
+		if (numPosts-end == 1){
+			getCategory( divs[id].id, id, end-start+1 );
+		} else {
+			createMoreButton(divs[id], divs[id].id, id, end-start+1);
+		}
 	} else if (numPosts <= 0){
 		removeElementById(id);
 		document.getElementById('header_'+id).style.border='0px none';
@@ -417,8 +426,9 @@ function createMoreButton( div, divId, catId, numPosts ){
 	div.appendChild(moreDiv);
 }
 
-// TUMBLR
-
+//------------------------------------------------------------
+// GET: TUMBLR
+//------------------------------------------------------------
 function getTumblr( divId, number )
 {	
 	if (contentIndicides["tumblr"]){
@@ -469,8 +479,9 @@ function onTumblrLoaded( json ){
 	}
 }
 
-//FLICKR
-
+//------------------------------------------------------------
+// GET: FLICKR
+//------------------------------------------------------------
 var fk = 'ec0596d5cac84b1b000c204c313e0746';
 function getFlickr( divId, number)
 {
@@ -522,7 +533,9 @@ function jsonFlickrApi(json){
 	}
 }
 
-//EEE
+//------------------------------------------------------------
+// GET: EEE
+//------------------------------------------------------------
 function getEEE(divId, numPosts )
 {
 	divs[divId] = document.getElementById(divId);
@@ -545,4 +558,19 @@ function getEEE(divId, numPosts )
 	  success: onCategoryLoaded,
 	  dataType: "json"
 	});
+}
+
+//------------------------------------------------------------
+// TIME
+//------------------------------------------------------------
+function updateTime(){
+	//2008-06-02 9:00
+	var then = new Date(2008,6,2,9,0,0,0);
+	var time = timeSince(then);
+	
+	document.getElementById("c-yr").innerHTML 	= time['years'];
+	document.getElementById("c-m").innerHTML 	= time['months'];
+	document.getElementById("c-d").innerHTML	= time['days'];
+	document.getElementById("c-hr").innerHTML	= time['hours'];
+	document.getElementById("c-min").innerHTML	= time['minutes'];
 }
