@@ -1,37 +1,3 @@
-function timeSince(date) {
-	var sinceObj = {};
-	
-    var seconds = Math.floor((new Date() - date) / 1000);
-
-    var interval = Math.floor(seconds / 31536000);
-
-    if (interval > 1) {
-		sinceObj['years'] = interval;
-    }
-	seconds -= interval*31536000;
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) {
-		sinceObj['months'] = interval;
-    }
-	seconds -= interval*2592000;
-	
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) {
-		sinceObj['days'] = interval;
-    }
-	seconds -= interval*86400;
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) {
-		sinceObj['hours'] = interval;
-    }
-	seconds -= interval*3600;
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) {
-		sinceObj['minutes'] = interval;
-    }
-	return sinceObj;
-}
-
 function updateTime(){
 	//2008-06-02 9:00
 	var then = new Date(2008,6,2,9,0,0,0);
@@ -542,26 +508,6 @@ function jsonFlickrApi(json){
 
 		var newDiv 	= newContent( p_id, divs['flickr'], 'flickr', title, "<div><img class='contentImage' src='"+imageL+"' />");//"<br />"+title+"</div>");
 		newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
-
-		/*var div = document.createElement("div");
-		div.id = p_id;
-		div.className = "postDiv";
-
-		var thumbDiv = document.createElement("div");
-		thumbDiv.id = p_id+"_thumb";
-
-		var thumbImg = document.createElement("div");
-		if (image !='') thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
-		thumbImg.className = "postImage";
-		thumbDiv.appendChild(thumbImg);
-
-		var thumbText = document.createElement("div");
-		thumbText.innerHTML = title;
-		thumbText.className = "thumbText";
-		thumbDiv.appendChild(thumbText);
-
-		div.appendChild(thumbDiv);
-		divs["flickr"].appendChild(div);*/
 	}
 	if (pages - page > 0){
 		var moreDiv = document.createElement("div");

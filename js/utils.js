@@ -10,6 +10,40 @@ function getQueryString(key)
 		return qs[1];
 }
 
+function timeSince(date) {
+	var sinceObj = {};
+	
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+		sinceObj['years'] = interval;
+    }
+	seconds -= interval*31536000;
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+		sinceObj['months'] = interval;
+    }
+	seconds -= interval*2592000;
+	
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+		sinceObj['days'] = interval;
+    }
+	seconds -= interval*86400;
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+		sinceObj['hours'] = interval;
+    }
+	seconds -= interval*3600;
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+		sinceObj['minutes'] = interval;
+    }
+	return sinceObj;
+}
+
 function removeElementById(id) {
 	var element = document.getElementById(id);
 	if (element) element.parentNode.removeChild(element);
