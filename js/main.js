@@ -65,55 +65,6 @@ $(document).ready(function(){
 	setInterval(updateTime, 30000);
 });
 
-// scroll
-function getScrollTop(){
-    if(typeof pageYOffset!= 'undefined'){
-        //most browsers
-        return pageYOffset;
-    }
-    else{
-        var B= document.body; //IE 'quirks'
-        var D= document.documentElement; //IE with doctype
-        D= (D.clientHeight)? D: B;
-        return D.gp;
-    }
-}
-function getScrollLeft(){
-    if(typeof pageXOffset!= 'undefined'){
-        //most browsers
-        return pageXOffset;
-    }
-    else{
-        var B= document.body; //IE 'quirks'
-        var D= document.documentElement; //IE with doctype
-        D= (D.clientWidth)? D: B;
-        return D.scrollLeft;
-    }
-}
-
-function scrollWindowTo(x, y)
-{
-	if (window.scrollInterval) window.clearInterval(window.scrollInterval);
-	window.targetX = x;
-	window.targetY = y;
-	window.curX    = getScrollLeft();
-	window.curY	   = getScrollTop();
-	window.scrollCount    = 0;
-	window.scrollInterval = window.setInterval(updateScroll, 3);
-}
-
-function updateScroll(){
-	window.scrollCount++;
-	window.curX -= (window.curX - window.targetX)/10;
-	window.curY -= (window.curY - window.targetY)/10;
-	if (Math.abs(window.targetX - window.curX) < 1 && Math.abs(window.targetY - window.curY) < 1 || window.scrollCount > 30){
-		window.scrollTo(Math.floor(window.targetX), Math.floor(window.targetY));
-		window.clearInterval(window.scrollInterval);
-	} else {
-		window.scrollTo(Math.floor(window.curX), Math.floor(window.curY));
-	}
-}
-
 // build thumb div
 function newProject( id, parent, catId, slug )
 {
@@ -500,18 +451,6 @@ function createMoreButton( div, divId, catId, numPosts ){
 	div.appendChild(moreDiv);
 }
 
-function removeElementById(id) {
-  var element = document.getElementById(id);
-  if (element) element.parentNode.removeChild(element);
-}
-
-function stripHTML(html)
-{
-   var tmp = document.createElement("DIV");
-   tmp.innerHTML = html;
-   return tmp.textContent||tmp.innerText;
-}
-
 // TUMBLR
 
 function getTumblr( divId, number )
@@ -549,25 +488,6 @@ function onTumblrLoaded( json ){
 		if (image){
 			var newDiv 	= newContent( p_id, divs['tumblr'], 'tumblr', posts[i].slug, "<div><img class='contentImage' src='"+image+"' />");//"<br />"+title+"</div>");
 			newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
-			/*var div = document.createElement("div");
-			div.id = p_id;
-			div.className = "postDiv";
-
-			var thumbDiv = document.createElement("div");
-			thumbDiv.id = p_id+"_thumb";
-
-			var thumbImg = document.createElement("div");
-			if (image !='') thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
-			thumbImg.className = "postImage";
-			thumbDiv.appendChild(thumbImg);
-
-			var thumbText = document.createElement("div");
-			thumbText.innerHTML = title;
-			thumbText.className = "thumbText";
-			thumbDiv.appendChild(thumbText);
-
-			div.appendChild(thumbDiv);
-			divs["tumblr"].appendChild(div);*/
 		}
 	}
 	if (numPosts - end > 0){
@@ -585,6 +505,7 @@ function onTumblrLoaded( json ){
 
 //FLICKR
 
+var fk = 'ec0596d5cac84b1b000c204c313e0746';
 function getFlickr( divId, number)
 {
 	if (contentIndicides["flickr"]){
@@ -598,18 +519,15 @@ function getFlickr( divId, number)
 	
 	var page = 1 + Math.ceil(contentIndicides["flickr"].offset/number);
 	
-	console.log("http://www.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key="+key+"&user_id=12319387@N03&per_page="+number+"&page="+page+"&format=json");
-	
 	divs["flickr"] = document.getElementById(divId);
 	$.ajax({
-	  url: "http://www.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key="+key+"&user_id=12319387@N03&per_page="+number+"&page="+page+"&format=json",
+	  url: "http://www.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key="+fk+"&user_id=12319387@N03&per_page="+number+"&page="+page+"&format=json",
 	  dataType: "jsonp"
 	});
 }
 
 //http://www.flickr.com/photos/{user-id}/{photo-id}
 //http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}.jpg
-
 function jsonFlickrApi(json){
 	var posts = json.photos.photo;
 	var page	 = json.photos.page;
@@ -681,16 +599,4 @@ function getEEE(divId, numPosts )
 	  success: onCategoryLoaded,
 	  dataType: "json"
 	});
-}
-
-//utils
-getQueryString = function (key)
-{
-	key = key.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-	var regex = new RegExp("[\\?&]"+key+"=([^&#]*)");
-	var qs = regex.exec(window.location.href);
-	if(qs == null)
-		return '';
-	else
-		return qs[1];
 }

@@ -65,6 +65,7 @@
 <script src="<?php echo(get_bloginfo('stylesheet_directory')); ?>/scripts/utils.js" language="javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" language="javascript"></script>
 <script src="js/key.js" language="javascript"></script>
+<script src="js/utils.js" language="javascript"></script>
 <script src="js/main.js" language="javascript"></script>
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 <?php
