@@ -75,7 +75,7 @@ function getScrollTop(){
         var B= document.body; //IE 'quirks'
         var D= document.documentElement; //IE with doctype
         D= (D.clientHeight)? D: B;
-        return D.scrollTop;
+        return D.gp;
     }
 }
 function getScrollLeft(){
@@ -98,13 +98,15 @@ function scrollWindowTo(x, y)
 	window.targetY = y;
 	window.curX    = getScrollLeft();
 	window.curY	   = getScrollTop();
+	window.scrollCount    = 0;
 	window.scrollInterval = window.setInterval(updateScroll, 3);
 }
 
 function updateScroll(){
-	window.curX -= (window.curX - window.targetX)/25;
-	window.curY -= (window.curY - window.targetY)/25;
-	if (Math.abs(window.targetX - window.curX) < 1 && Math.abs(window.targetY - window.curY) < 1){
+	window.scrollCount++;
+	window.curX -= (window.curX - window.targetX)/10;
+	window.curY -= (window.curY - window.targetY)/10;
+	if (Math.abs(window.targetX - window.curX) < 1 && Math.abs(window.targetY - window.curY) < 1 || window.scrollCount > 30){
 		window.scrollTo(Math.floor(window.targetX), Math.floor(window.targetY));
 		window.clearInterval(window.scrollInterval);
 	} else {
@@ -198,6 +200,17 @@ function newProject( id, parent, catId, slug )
 		newDiv.imageContainer.style.left = -newDiv.images[newDiv.currentImage].offsetLeft+"px";//clientLeft;
 	}
 	
+	newDiv.close			= document.getElementById("close_"+id);
+	newDiv.close.onmouseover = function(){
+		newDiv.close.style.opacity = '1';
+	}
+	newDiv.close.onmouseout = function(){
+		newDiv.close.style.opacity = '.4';
+	}
+	newDiv.close.onmouseup = function(){
+		closeProject(newDiv);
+		window.location.hash='';
+	}
 	
 	//newDiv.titleContainer	= document.getElementById("title_"+id);
 	newDiv.contentContainer	= document.getElementById("content_"+id);
@@ -215,7 +228,6 @@ function openProject( projectDiv )
 	projectDiv.contentDiv.style.display = "block";
 	projectDiv.className = "openedPost";
 	
-	projectDiv.contentContainer.innerHTML = projectDiv.contentHTML;
 	projectDiv.imageContainer.width = 0;
 	var len = projectDiv.imageData.length;
 	projectDiv.images = [];
@@ -242,8 +254,15 @@ function openProject( projectDiv )
 				console.log('error with eval '+exc);
 			}
 		}
+		// add content
+		projectDiv.contentContainer.innerHTML = projectDiv.contentHTML;
+	// looks like they're not formatted, so add + do some other stuff
 	} else {
-		removeElementById("images_"+projectDiv.id);
+		if (projectDiv.hasImageDiv){
+			projectDiv.hasImageDiv = false;
+			removeElementById("images_"+projectDiv.id);
+		}
+		projectDiv.contentContainer.innerHTML = "<div id='pTitle'><h1>"+projectDiv.title+"</h1>"+projectDiv.contentHTML;
 	}
 	
 	currentOpenProject = projectDiv;
@@ -286,7 +305,7 @@ function newContent( id, parent, catId, slug, content){
 		newDiv.contentContainer.innerHTML = newDiv.content;
 		newDiv.contentDiv.style.visibility = "visible";
 		newDiv.contentDiv.style.display = "block";
-		newDiv.className = "openedPost";
+		newDiv.className = "openedAPId";
 		currentOpenProject = newDiv;
 		scrollWindowTo(0, newDiv.offsetTop);
 		window.location.hash=newDiv.slug;
@@ -301,6 +320,18 @@ function newContent( id, parent, catId, slug, content){
 	newDiv.contentDiv		= document.getElementById("contentDiv_"+id);
 	newDiv.contentContainer	= document.getElementById("content_"+id);
 	newDiv.content = content;
+	
+	newDiv.close			= document.getElementById("close_"+id);
+	newDiv.close.onmouseover = function(){
+		newDiv.close.style.opacity = '1';
+	}
+	newDiv.close.onmouseout = function(){
+		newDiv.close.style.opacity = '.4';
+	}
+	newDiv.close.onmouseup = function(){
+		closeProject(newDiv);
+		window.location.hash='';
+	}
 	
 	return newDiv;
 }
@@ -360,6 +391,14 @@ function onCategoryLoaded( json )
 		numPosts 	= json.count;
 	}
 	
+	if (slug == 'twitter'){
+		if (divs[id].currentTweet){
+			divs[id].currentTweet.parentNode.removeChild(divs[id].currentTweet);
+		} else {
+			divs[id].className += ' twitterParent'; 
+		}
+	}
+	
 	var posts 		= json.posts;
 	
 	if (divs[id] != null){
@@ -381,7 +420,6 @@ function onCategoryLoaded( json )
 		
 		if (status == "publish"){
 			if (slug != 'twitter' && slug != 'flickr' && slug != 'tumblr' ){
-				console.log(posts[i].excerpt);
 				if (posts[i].excerpt != 'blank'){
 					var p_id 	= posts[i].id;
 					var url  	= posts[i].url;
@@ -398,8 +436,10 @@ function onCategoryLoaded( json )
 					newDiv.thumbImg.innerHTML  		= posts[i].excerpt;
 					//newDiv.thumbText.innerHTML 		= title;
 					//newDiv.titleContainer.innerHTML 	= title;
+					newDiv.title		= title
 					newDiv.contentHTML 	= contentHTML;
-					newDiv.imageData		= images;
+					newDiv.imageData	= images;
+					newDiv.hasImageDiv	= true;
 					divs[id].appendChild(newDiv);
 					if (hash == posts[i].slug){
 						openProject(newDiv);
@@ -423,6 +463,7 @@ function onCategoryLoaded( json )
 						div.className = "twitter";
 						div.innerHTML = "<p>'"+contentStripped+"'</p>";
 						divs[id].appendChild(div);
+						divs[id].currentTweet = div;
 					}
 
 				}
@@ -461,7 +502,7 @@ function createMoreButton( div, divId, catId, numPosts ){
 
 function removeElementById(id) {
   var element = document.getElementById(id);
-  element.parentNode.removeChild(element);
+  if (element) element.parentNode.removeChild(element);
 }
 
 function stripHTML(html)
@@ -506,7 +547,7 @@ function onTumblrLoaded( json ){
 		var image	= posts[i]["photo-url-1280"];
 		
 		if (image){
-			var newDiv 	= newContent( p_id, divs['tumblr'], 'tumblr', posts[i].slug, "<div><img class='contentImage' src='"+image+"' /><br />"+title+"</div>");
+			var newDiv 	= newContent( p_id, divs['tumblr'], 'tumblr', posts[i].slug, "<div><img class='contentImage' src='"+image+"' />");//"<br />"+title+"</div>");
 			newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
 			/*var div = document.createElement("div");
 			div.id = p_id;
@@ -555,7 +596,9 @@ function getFlickr( divId, number)
 		contentIndicides["flickr"].offset = 0;
 	}
 	
-	var page = 1 + contentIndicides["flickr"].offset/number;
+	var page = 1 + Math.ceil(contentIndicides["flickr"].offset/number);
+	
+	console.log("http://www.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key="+key+"&user_id=12319387@N03&per_page="+number+"&page="+page+"&format=json");
 	
 	divs["flickr"] = document.getElementById(divId);
 	$.ajax({
@@ -579,7 +622,7 @@ function jsonFlickrApi(json){
 		var image	= "http://farm"+posts[i].farm+".static.flickr.com/"+posts[i].server+"/"+posts[i].id+"_"+posts[i].secret+".jpg";
 		var imageL	= "http://farm"+posts[i].farm+".static.flickr.com/"+posts[i].server+"/"+posts[i].id+"_"+posts[i].secret+"_b.jpg";
 
-		var newDiv 	= newContent( p_id, divs['flickr'], 'flickr', title, "<div><img class='contentImage' src='"+imageL+"' /><br />"+title+"</div>");
+		var newDiv 	= newContent( p_id, divs['flickr'], 'flickr', title, "<div><img class='contentImage' src='"+imageL+"' />");//"<br />"+title+"</div>");
 		newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
 
 		/*var div = document.createElement("div");

@@ -49,7 +49,7 @@
 				} else if ($slug == "tumblr"){
 					echo("<script>setTimeout(getTumblr(" . $categories[$i]->cat_ID. ",7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else if ($slug == "endlessendlessendless"){
-					echo("<script>setTimeout(getEEE(" . $categories[$i]->cat_ID. ",7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getEEE(" . $categories[$i]->cat_ID. ",4 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else {		
 					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7),'. $i*2 .' ); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				}
@@ -68,6 +68,7 @@
 		<div id="openProject" class="openProject">+</div>
 	</div>
 	<div id="contentDiv" class="rcPost">
+		<div id="close" class="close">CLOSE</div>
 		<div id="images" class="rcPostImages">
 			<div id="image" class="rcPostImageContainer"></div>
 			<div id="prevNext" class="prevNextContainer">
@@ -93,10 +94,10 @@
 		<div id="openProject" class="openProject">+</div>
 	</div>
 	<div id="contentDiv" class="rcPost">
+		<div id="close" class="close">CLOSE</div>
 		<div id="contentDiv">
-			<div id="content" class="rcContent"></div>
+			<div id="content" class=""></div>
 		</div>
-		<hr />
 	</div>
 	<!-- <hr /> -->
 </div>

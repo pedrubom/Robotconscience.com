@@ -251,12 +251,24 @@ DESCRIPTION: One centered column with no sidebar
 
 .openedPost
 {
-	width:900px;
 	margin-right:2px;
 	margin-bottom:2px;
 	float:left;
 	border-bottom:1px dotted #666;
 	width:938px;
+}
+
+.openedAPId
+{
+	margin-right:2px;
+	margin-bottom:2px;
+	float:left;
+	width:auto;	
+}
+
+.openedAPId p 
+{
+	width:auto;
 }
 
 .openedContent 
@@ -285,6 +297,23 @@ DESCRIPTION: One centered column with no sidebar
 	padding-bottom:5px;
 	float:right;
 	visibility:hidden;
+	opacity:0;
+}
+
+.close
+{
+	position:absolute;
+	background-color:white;
+	color:black;
+	padding:10px;
+	padding-bottom:5px;
+	float:left;
+	padding:4px 8px 2px 8px;
+	cursor:pointer;
+	-webkit-transition: opacity .25s ease-out;
+	transition: opacity .25s ease-out;
+	opacity:.4;
+	z-index:10;
 }
 
 .prevNextContainer
@@ -337,7 +366,8 @@ h2
 
 .contentImage
 {
-	max-height:500px;
+	max-height:530px;
+	max-width:938px;
 }
 
 .rcContent
@@ -424,20 +454,6 @@ h2
 }
 /* post types */
 
-.twitter
-{
-	font-size:35px;
-	line-height:36px;
-	margin-top:12px;
-	margin-bottom:7px;
-	padding:10px;
-}
-
-.tumblrImg 
-{
-	width:
-233px;
-}
 
 .moreButton {
 	color:white;
@@ -449,6 +465,44 @@ h2
 	cursor:pointer;
 	float:left;
 	margin:2px;
+}
+
+.twitter
+{
+	font-size:35px;
+	line-height:40px;
+	margin-top:12px;
+	margin-bottom:7px;
+	padding:10px;
+}
+.twitter p
+{
+	width:888px;
+}
+
+.twitterParent
+{
+}
+
+.twitterParent .moreButton
+{
+	-webkit-transform:rotate(270deg);
+	-moz-transform:rotate(270deg);
+	-ms-transform:rotate(270deg);
+	top: -63px;
+	position: relative;
+	left: 35px;
+	width: 90px;
+	z-index: 10;
+	right: 100%;
+	float: right;
+	text-align: center;
+	margin-bottom: -40px;
+}
+
+.tumblrImg 
+{
+	width:233px;
 }
 
 
@@ -633,6 +687,7 @@ hr {
 /* Text elements */
 p {
 	/*margin-bottom: 18px;*/
+	width:457px;
 }
 ul {
 	list-style: square;
