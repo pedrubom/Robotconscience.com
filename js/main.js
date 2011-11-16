@@ -460,10 +460,11 @@ function onTumblrLoaded( json ){
 		var url  	= posts[i].url;
 		var title	= posts[i]["photo-caption"];
 		var image	= posts[i]["photo-url-1280"];
+		var imageSm	= posts[i]["photo-url-250"];
 		
 		if (image){
 			var newDiv 	= newContent( p_id, divs['tumblr'], 'tumblr', posts[i].slug, "<div><img class='contentImage' src='"+image+"' />");//"<br />"+title+"</div>");
-			newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+image+"' />";
+			newDiv.thumbImg.innerHTML = "<img class='tumblrImg' src='"+imageSm+"' />";
 		}
 	}
 	if (numPosts - end > 0){

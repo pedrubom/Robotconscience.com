@@ -43,15 +43,15 @@
 			<div id="'. $categories[$i]->cat_ID. '" class="catContainer"></div>
 				');
 				if ($slug == "twitter"){
-					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 3 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID."); </script>");
+					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID . "," . $categories[$i]->cat_ID . ", 3)," . $i*2 . "); setHeader(" . $categories[$i]->cat_ID . "); </script>");
 				} else if ($slug == "flickr"){
-					echo("<script>setTimeout(getFlickr(" . $categories[$i]->cat_ID.", 7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getFlickr(" . $categories[$i]->cat_ID.", 7 ),". $i*2 ."); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else if ($slug == "tumblr"){
-					echo("<script>setTimeout(getTumblr(" . $categories[$i]->cat_ID. ",7 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getTumblr(" . $categories[$i]->cat_ID. ",7 ),". $i*2 ."); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else if ($slug == "endlessendlessendless"){
-					echo("<script>setTimeout(getEEE(" . $categories[$i]->cat_ID. ",4 ),'. $i*2 .'); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getEEE(" . $categories[$i]->cat_ID. ",4 ),". $i*2 ."); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				} else {		
-					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7),'. $i*2 .' ); setHeader(" . $categories[$i]->cat_ID.");</script>");
+					echo("<script>setTimeout(getCategory(" . $categories[$i]->cat_ID.",".$categories[$i]->cat_ID.", 7),". $i*2 ."); setHeader(" . $categories[$i]->cat_ID.");</script>");
 				}
 				/*echo('
 			<hr id="'. $categories[$i]->cat_ID .'_buffer" class="postsHr" />');*/

@@ -54,7 +54,7 @@ Tags: black, blue, white, two-columns, fixed-width, custom-header, custom-backgr
 	url('fonts/serifa/SerifaStd-Bold.otf');
 }
 
-@font-face {
+/*@font-face {
 	font-family:"SerifaR";
 	font-weight:regular;
 	src: local('SerifaStd-Roman.otf'),
@@ -73,7 +73,7 @@ Tags: black, blue, white, two-columns, fixed-width, custom-header, custom-backgr
 	font-weight:regular;
 	src: local('SerifaStd-Bold.otf'),
 	url('fonts/serifa/SerifaStd-Bold.otf');
-}
+}*/
 
 /* =Reset default browser CSS. Based on work by Eric Meyer: http://meyerweb.com/eric/tools/css/reset/index.html
 -------------------------------------------------------------- */
@@ -366,7 +366,7 @@ h2
 
 .contentImage
 {
-	max-height:530px;
+	max-height:539px;
 	max-width:938px;
 }
 
@@ -435,7 +435,7 @@ h2
 .rcPostImageContainer
 {
 	width:99999px;
-	height:500px;
+	height:539px;
 	position:relative;
 	left:0px;
 	-webkit-transition: left .25s ease-out;
@@ -447,14 +447,14 @@ h2
 	float:left;
 	/*padding-right:5px;*/
 	width:938px;
-	height:500px;
+	height:539px;
 	background-color:#000;
 	text-align:center;
 }
 
 .rcPostImage img
 {
-	height:500px;
+	height:539px;
 }
 /* post types */
 
